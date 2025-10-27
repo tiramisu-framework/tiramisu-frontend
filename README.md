@@ -1,6 +1,6 @@
 # 🍰 Tiramisu Frontend
 
-Modern React/Next.js interface for the Tiramisu Marketing AI Framework - an AI-powered marketing consultant combining insights from Philip Kotler, Gary Vaynerchuk, and Martha Gabriel.
+Modern React/Next.js interface for the Tiramisu Marketing AI Framework - an AI-powered marketing consultant combining insights from strategic marketing principles, practical execution methods, and digital transformation concepts.
 
 ## ✨ Features
 

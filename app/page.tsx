@@ -139,9 +139,9 @@ export default function Home() {
             Sua Consultora de Marketing & Vendas
           </p>
           <p className="text-gray-500">
-            Fusão de <span className="font-semibold text-blue-600">Kotler</span> × 
-            <span className="font-semibold text-orange-600"> Gary Vee</span> × 
-            <span className="font-semibold text-purple-600"> Martha Gabriel</span>
+            Strategic <span className="font-semibold text-blue-600">Analysis</span> × 
+            <span className="font-semibold text-orange-600"> Execution</span> × 
+            <span className="font-semibold text-purple-600"> Technology</span>
           </p>
         </div>
 

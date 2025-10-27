@@ -10,9 +10,9 @@ interface AnalysisResponse {
     branches: string;
   };
   triad_insights: {
-    kotler: string;
-    gary_vee: string;
-    martha: string;
+    strategic: string;
+    execution: string;
+    technology: string;
   };
   proposal: {
     improved_version: string;
@@ -41,7 +41,7 @@ export default function AnalysisResult({
           🍰 Análise da Tiramisu
         </h2>
         <p className="text-sm text-gray-600">
-          Fusão de Kotler × Gary Vee × Martha Gabriel
+          Strategic Analysis × Execution × Technology
         </p>
       </div>
 
@@ -105,33 +105,33 @@ export default function AnalysisResult({
         <div className="space-y-4">
           <div>
             <h4 className="text-lg font-medium text-blue-700 mb-2">
-              🎓 KOTLER - Estratégia
+              🎓 STRATEGIC PERSPECTIVE
             </h4>
             <div className="max-h-64 overflow-y-auto bg-gray-50 rounded-lg p-4 border border-gray-200">
               <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                {result.triad_insights.kotler}
+                {result.triad_insights.strategic}
               </p>
             </div>
           </div>
 
           <div>
             <h4 className="text-lg font-medium text-orange-700 mb-2">
-              🔥 GARY VEE - Execução
+              🔥 EXECUTION PERSPECTIVE
             </h4>
             <div className="max-h-64 overflow-y-auto bg-gray-50 rounded-lg p-4 border border-gray-200">
               <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                {result.triad_insights.gary_vee}
+                {result.triad_insights.execution}
               </p>
             </div>
           </div>
 
           <div>
             <h4 className="text-lg font-medium text-purple-700 mb-2">
-              🤖 MARTHA - Tecnologia
+              🤖 TECHNOLOGY PERSPECTIVE
             </h4>
             <div className="max-h-64 overflow-y-auto bg-gray-50 rounded-lg p-4 border border-gray-200">
               <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                {result.triad_insights.martha}
+                {result.triad_insights.technology}
               </p>
             </div>
           </div>
