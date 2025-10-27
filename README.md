@@ -88,3 +88,19 @@ Developed by Jony Wolff
 ---
 
 **Tiramisu Framework** - Three minds, one solution 🍰
+
+## 📚 Setup Data
+
+Users need to provide their own marketing knowledge sources:
+
+1. **Add documents to data/ folder**
+   - Place your marketing PDFs/documents in the backend's `data/` directory
+
+2. **Run indexing to create FAISS vectors**
+   - Follow backend instructions to index your content
+
+3. **Configure OpenAI API key**
+   - Set up your API key in the backend configuration
+
+For complete setup instructions, see the backend repository:
+https://github.com/tiramisu-framework/tiramisu-framework
