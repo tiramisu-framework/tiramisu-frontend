@@ -1,0 +1,130 @@
+/**
+ * Client para API Tiramisu
+ */
+import axios from 'axios';
+import type { AnalysisRequest, AnalysisResponse, AnalysisTypeOption, ConversationCreateResponse, ConversationAnalysisRequest, ConversationAnalysisResponse, ConversationSummary } from './types';
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+export class TiramisuAPI {
+  private baseURL: string;
+
+  constructor(baseURL: string = API_BASE_URL) {
+    this.baseURL = baseURL;
+  }
+
+  /**
+   * Analisa conteúdo de marketing/vendas
+   */
+  async analyze(request: AnalysisRequest): Promise<AnalysisResponse> {
+    try {
+      const response = await axios.post<AnalysisResponse>(
+        `${this.baseURL}/api/analyze`,
+        request,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao analisar:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Busca tipos de análise disponíveis
+   */
+  async getTypes(): Promise<AnalysisTypeOption[]> {
+    try {
+      const response = await axios.get<{ types: AnalysisTypeOption[] }>(
+        `${this.baseURL}/api/types`
+      );
+      return response.data.types;
+    } catch (error) {
+      console.error('Erro ao buscar tipos:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Health check
+   */
+  async healthCheck(): Promise<boolean> {
+    try {
+      const response = await axios.get(`${this.baseURL}/api/health`);
+      return response.data.status === 'healthy';
+    } catch (error) {
+      return false;
+    }
+  }
+
+// Instância singleton
+export const tiramisuAPI = new TiramisuAPI();
+
+  // ============================================================
+  // MÉTODOS PARA CONVERSAS CONTÍNUAS
+  // ============================================================
+
+  /**
+   * Cria nova conversa
+   */
+  async createConversation(title?: string): Promise<ConversationCreateResponse> {
+    try {
+      const response = await axios.post<ConversationCreateResponse>(
+        `${this.baseURL}/api/conversations/create`,
+        { title },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao criar conversa:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Analisa conteúdo com contexto de conversa
+   */
+  async analyzeWithConversation(
+    conversationId: string,
+    request: ConversationAnalysisRequest
+  ): Promise<ConversationAnalysisResponse> {
+    try {
+      const response = await axios.post<ConversationAnalysisResponse>(
+        `${this.baseURL}/api/conversations/${conversationId}/analyze`,
+        request,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao analisar com conversa:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Busca resumo da conversa
+   */
+  async getConversationSummary(conversationId: string): Promise<ConversationSummary> {
+    try {
+      const response = await axios.get<ConversationSummary>(
+        `${this.baseURL}/api/conversations/${conversationId}/summary`
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar resumo:', error);
+      throw error;
+    }
+  }
+}

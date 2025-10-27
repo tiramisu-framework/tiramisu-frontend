@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+.next/
+
+# Logs
+*.log
+
+# Environment
+.env.local
+.env
+
+# Backups
+*.tar.gz
+*.zip
+*.backup
+
+# OS
+.DS_Store

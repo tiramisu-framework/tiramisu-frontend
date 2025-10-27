@@ -1,0 +1,161 @@
+'use client';
+import { useState, useEffect } from 'react';
+import { tiramisuAPI } from '@/lib/api';
+import { AnalysisType, AnalysisTypeOption, AnalysisResponse } from '@/lib/types';
+import AnalysisForm from '@/components/AnalysisForm';
+import AnalysisResult from '@/components/AnalysisResult';
+import ModeToggle from '@/components/ModeToggle';
+
+export default function Home() {
+  const [mode, setMode] = useState<'simple' | 'conversation'>('simple');
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [messageCount, setMessageCount] = useState<number>(0);
+  
+  const [types, setTypes] = useState<AnalysisTypeOption[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [result, setResult] = useState<AnalysisResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [apiHealthy, setApiHealthy] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    loadTypes();
+    checkApiHealth();
+  }, []);
+
+  const checkApiHealth = async () => {
+    const healthy = await tiramisuAPI.checkHealth();
+    setApiHealthy(healthy);
+  };
+
+  const loadTypes = async () => {
+    try {
+      const fetchedTypes = await tiramisuAPI.getTypes();
+      setTypes(fetchedTypes);
+    } catch (err) {
+      console.error('Erro ao carregar tipos:', err);
+      setError('Não foi possível carregar os tipos de análise.');
+    }
+  };
+
+  const handleModeChange = (newMode: 'simple' | 'conversation') => {
+    setMode(newMode);
+    setResult(null);
+    setError(null);
+    
+    if (newMode === 'conversation' && !conversationId) {
+      startNewConversation();
+    }
+  };
+
+  const startNewConversation = async () => {
+    try {
+      const response = await tiramisuAPI.createConversation();
+      setConversationId(response.conversation_id);
+      setMessageCount(0);
+    } catch (err) {
+      console.error('Erro ao criar conversa:', err);
+      setError('Erro ao criar conversa.');
+    }
+  };
+
+  const handleAnalyze = async (type: AnalysisType, content: string, context: string) => {
+    setIsLoading(true);
+    setError(null);
+    setResult(null);
+
+    try {
+      if (mode === 'simple') {
+        const response = await tiramisuAPI.analyze({
+          type,
+          content,
+          context: context || undefined,
+        });
+        setResult(response);
+      } else {
+        if (!conversationId) {
+          throw new Error('Nenhuma conversa ativa');
+        }
+        const response = await tiramisuAPI.analyzeWithConversation(conversationId, {
+          type,
+          content,
+          context: context || undefined,
+        });
+        setResult(response.analysis);
+        setMessageCount(response.message_count);
+      }
+    } catch (err: unknown) {
+      console.error('Erro ao analisar:', err);
+      setError((err instanceof Error ? err.message : "Erro ao processar análise.") || 'Erro ao processar análise.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleNewAnalysis = () => {
+    setResult(null);
+    setError(null);
+    
+    if (mode === 'conversation') {
+      startNewConversation();
+    }
+  };
+
+  return (
+    <main className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="text-center mb-8">
+          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            🍰 Tiramisu
+          </h1>
+          <p className="text-xl text-gray-600 mb-2">
+            Sua Consultora de Marketing & Vendas
+          </p>
+          <p className="text-gray-500">
+            Fusão de <span className="font-semibold text-blue-600">Kotler</span> × 
+            <span className="font-semibold text-orange-600"> Gary Vee</span> × 
+            <span className="font-semibold text-purple-600"> Martha Gabriel</span>
+          </p>
+        </div>
+
+        <div className="mb-8">
+          <ModeToggle mode={mode} onChange={handleModeChange} />
+        </div>
+
+        {mode === 'conversation' && conversationId && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-center">
+            <p className="text-blue-800">
+              💬 <strong>Conversa Ativa</strong> · {messageCount} mensagens
+            </p>
+          </div>
+        )}
+
+        {apiHealthy === false && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <p className="text-red-800">
+              ⚠️ API não está respondendo. Verifique se está rodando em http://localhost:8000
+            </p>
+          </div>
+        )}
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <p className="text-red-800">{error}</p>
+          </div>
+        )}
+
+        {!result ? (
+          <AnalysisForm
+            types={types}
+            onSubmit={handleAnalyze}
+            isLoading={isLoading}
+          />
+        ) : (
+          <AnalysisResult
+            result={result}
+            onNewAnalysis={handleNewAnalysis}
+          />
+        )}
+      </div>
+    </main>
+  );
+}
